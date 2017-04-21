@@ -66,8 +66,6 @@ public class MDA_HW3_Euclidean {
                   double [] total = new double[fnum];
                   ArrayList<ArrayList<Double>> calCost = new ArrayList<ArrayList<Double>>();
 
-
-                  int index=0;
                   for(Text val : values){
                       String [] parseText = val.toString().split(" ");
                       for(int i=0;i<fnum;i++){
@@ -78,18 +76,19 @@ public class MDA_HW3_Euclidean {
                         sList.add(Double.parseDouble(parseText[i]));
                       }
                       calCost.add(sList);
-                      index++;
                   }
                   for(int i=0;i<fnum;i++){
                     total[i] = total[i] / (double)calCost.size();
                   }
+                  String v = conf.get(String.valueOf(key));
+                  String [] centroid = v.split(" ");
+                  
                   double totalCost = 0;
                   for(int i=0;i<calCost.size();i++){
                     for(int j=0;j<fnum;j++){
-                      totalCost+=Math.pow(calCost.get(i).get(j) - total[j],2);
+                      totalCost+=Math.pow(calCost.get(i).get(j) - Double.parseDouble(centroid[j]),2);
                     }
                   }
-
 
                   String writeout = "";
                   for(int i=0;i<fnum;i++){
@@ -101,14 +100,56 @@ public class MDA_HW3_Euclidean {
                   context.write(null,new Text(writeout+" "+String.valueOf(totalCost)));
           }
     }
+    
+private static void calDist(Map<String,String> path,int iter){
+    try{
+      double [][] center = new double[knum][fnum];
+      FileSystem fs = FileSystem.get(new Configuration());
+      FSDataOutputStream os = null;
+      BufferedReader br=new BufferedReader(new InputStreamReader(fs.open(new Path(path.get("outCenter")+String.valueOf(iter)+"/part-r-00000"))));
+      String line;
+      line=br.readLine();
+      int index=0;
+      while (line != null){
+        String [] par = line.split(" ");
+        for(int i=0;i<fnum;i++){
+            center[index][i] = Double.parseDouble(par[i]);
+        }
+        line=br.readLine();
+        index++;
+      }
 
+      String content="";
+      for(int i=0;i<knum;i++){
+        for(int j=i+1;j<knum;j++){
+            double cost=0;
+            for(int k=0;k<fnum;k++){
+              cost+=Math.pow(center[i][fnum]-center[j][fnum],2);
+            }
+            cost=Math.sqrt(cost);
+            content = content + String.valueOf(i+1)+" between "+String.valueOf(j+1)+" "+String.valueOf(cost)+"\n";
+        }
+      }
+      byte[] buff = content.getBytes();
+      os = fs.create(new Path("/user/root/output/dist"));
+      os.write(buff, 0, buff.length);
+      if(os != null)
+      os.close();
+      fs.close();
+    }
+    catch (Exception e){
+
+    }
+
+}
 
 public static void main (String[] args) throws Exception {
     Map<String, String> path = new HashMap<String, String>();
     path.put("data","/user/root/data/data.txt");
     path.put("outCenter","/user/root/output/outCenter");
     path.put("outCost","/user/root/output/outCost");
-    int iter=10;
+
+    int iter=1;
 
     for(int i=0;i<iter;i++){
       Configuration conf = new Configuration();
@@ -142,7 +183,10 @@ public static void main (String[] args) throws Exception {
 
 
     }
+    calDist(path,iter);
+    
     try{
+      
       double [] cost = new double[iter+1];
       FileSystem fs = FileSystem.get(new Configuration());
       FSDataOutputStream os = null;
@@ -166,6 +210,7 @@ public static void main (String[] args) throws Exception {
       if(os != null)
       os.close();
       fs.close();
+      
     }
     catch (Exception e){
 

@@ -19,7 +19,7 @@ import java.util.*;
 import java.net.*;
 
 
-public class MDA_HW3_Euclidean {
+public class MDA_HW3_Manhattan {
     private static int knum = 10;
     private static int fnum = 58;
 
@@ -83,10 +83,13 @@ public class MDA_HW3_Euclidean {
                   for(int i=0;i<fnum;i++){
                     total[i] = total[i] / (double)calCost.size();
                   }
+                  String v = conf.get(String.valueOf(key));
+                  String [] centroid = v.split(" ");                  
+                  
                   double totalCost = 0;
                   for(int i=0;i<calCost.size();i++){
                     for(int j=0;j<fnum;j++){
-                      totalCost+=Math.abs(calCost.get(i).get(j) - total[j]);
+                      totalCost+=Math.abs(calCost.get(i).get(j) - Double.parseDouble(centroid[j]));
                     }
                   }
 
@@ -108,7 +111,7 @@ public static void main (String[] args) throws Exception {
     path.put("data","/user/root/data/data.txt");
     path.put("outCenter","/user/root/output/outCenter");
     path.put("outCost","/user/root/output/outCost");
-    int iter=10;
+    int iter=20;
 
     for(int i=0;i<iter;i++){
       Configuration conf = new Configuration();
@@ -129,7 +132,7 @@ public static void main (String[] args) throws Exception {
       fs.close();
 
       Job job = new Job(conf, "Kmeans"+String.valueOf(i));
-      job.setJarByClass(MDA_HW3_Euclidean.class);
+      job.setJarByClass(MDA_HW3_Manhattan.class);
       job.setMapperClass(kmeansMapper.class);
       job.setReducerClass(kmeansReducer.class);
       job.setMapOutputKeyClass(IntWritable.class);
