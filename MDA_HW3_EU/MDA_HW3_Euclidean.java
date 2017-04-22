@@ -124,7 +124,7 @@ private static void calDist(Map<String,String> path,int iter){
         for(int j=i+1;j<knum;j++){
             double cost=0;
             for(int k=0;k<fnum;k++){
-              cost+=Math.pow(center[i][fnum]-center[j][fnum],2);
+              cost+=Math.pow(center[i][k]-center[j][k],2);
             }
             cost=Math.sqrt(cost);
             content = content + String.valueOf(i+1)+" between "+String.valueOf(j+1)+" "+String.valueOf(cost)+"\n";
@@ -149,7 +149,7 @@ public static void main (String[] args) throws Exception {
     path.put("outCenter","/user/root/output/outCenter");
     path.put("outCost","/user/root/output/outCost");
 
-    int iter=1;
+    int iter=20;
 
     for(int i=0;i<iter;i++){
       Configuration conf = new Configuration();

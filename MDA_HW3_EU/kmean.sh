@@ -8,4 +8,4 @@ hadoop fs -rm -R /user/root/output/outCenter7*
 hadoop fs -rm -R /user/root/output/outCenter8*
 hadoop fs -rm -R /user/root/output/outCenter9*
 hadoop fs -rm -R /user/root/output/outCost*
-hadoop fs -rm -R /user/root/output/outDistance*
+hadoop fs -rm -R /user/root/output/dist*
