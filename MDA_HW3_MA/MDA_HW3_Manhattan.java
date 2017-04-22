@@ -124,9 +124,9 @@ private static void calDist(Map<String,String> path,int iter){
         for(int j=i+1;j<knum;j++){
             double cost=0;
             for(int k=0;k<fnum;k++){
-              cost+=Math.pow(center[i][k]-center[j][k],2);
+              cost+=Math.abs(center[i][k]-center[j][k]);
             }
-            cost=Math.sqrt(cost);
+            //cost=Math.sqrt(cost);
             content = content + String.valueOf(i+1)+" between "+String.valueOf(j+1)+" "+String.valueOf(cost)+"\n";
         }
       }
